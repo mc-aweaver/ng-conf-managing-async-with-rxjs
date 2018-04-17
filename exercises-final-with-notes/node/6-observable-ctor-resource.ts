@@ -1,0 +1,46 @@
+import { Observable } from 'rxjs';
+import { Resource } from './fixtures/6-Resource';
+
+// TODO: create an observable with the Observable constructor that
+// creates a new resource, subscribes to it's "data" event, and tears it
+// down when it's done.
+
+/**
+NOTE: `Resource` usage, the long way to do it:
+
+const resource = new Resource(); // start the resource;
+resource.addEventListener('data', handler); // listen for data events
+resource.removeEventListener('data', handler); // stop listening for data events
+*/
+
+//using deterministic memory management (how?)
+const source$ = new Observable(observer => {
+  const resource = new Resource();
+  const handler = value => observer.next(value);
+  resource.addEventListener('data', handler);
+
+  return () => {
+    //Make sure to remove the event listener when the observer is complete
+    resource.removeEventListener('data', handler);
+  }
+});
+const subscription = source$.subscribe(
+  x => console.log(x),
+  err => console.error(err),
+  () => console.info('done')
+);
+
+setTimeout(() => subscription.unsubscribe(), 2100);
+
+/**
+NOTE: output should be:
+
+Resource: started
+Resource: event listener added
+0
+1
+2
+3
+Resource: event listener removed
+Resource: closed
+*/
