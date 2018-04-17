@@ -30,7 +30,7 @@
     map(e => e.target.value),
     map(q => getSearchURL(q)),
     switchMap(url =>
-      ajax.getJSON(url).pipe(
+      ajax.ajax.getJSON(url).pipe(
         catchError(err => empty()),
       )
     ),
@@ -56,8 +56,8 @@
   function getTickerStream(symbol) {
     // TODO: multiplex the web socket (then add retry logic)
     return webSocket$.multiplex(
-      () => JSON.stringify({ type: 'sub', symbol }),
-      () => JSON.stringify({ type: 'unsub', symbol }),
+      () => { return { type: 'sub', symbol }; } ,
+      () => { return { type: 'unsub', symbol }; } ,
       x => x.symbol === symbol
     )
     .pipe(

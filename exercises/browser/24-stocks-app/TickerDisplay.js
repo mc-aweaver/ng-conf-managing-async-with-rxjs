@@ -13,7 +13,7 @@
       const { data, title } = this;
       const self = this;
 
-      const data$ = from(data);
+      const data$ = rxjs.from(data);
 
       Highcharts.setOptions({
         global: {
